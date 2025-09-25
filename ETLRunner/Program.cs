@@ -2,15 +2,19 @@
 using Application.Services;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Persistence.Contexts;
 
 
+var configuration = new ConfigurationBuilder()
+          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+          .Build();
 
-string basePath = @"C:\Users\yenze\OneDrive\Desktop\Archivo CSV Análisis de Ventas-20250923/";
-string connectionString = "Host=localhost;Port=5432;Database=AnalisisVentaDB;Username=postgres;Password=Dr.yenzel7";
-
+var connectionString = configuration.GetConnectionString("DefaultConnection");
 var optionsBuilder = new DbContextOptionsBuilder<SADVContext>();
 optionsBuilder.UseNpgsql(connectionString);
+
+string basePath = @"C:\Users\yenze\OneDrive\Desktop\Archivo CSV Análisis de Ventas-20250923/";
 
 using var context = new SADVContext(optionsBuilder.Options);
 

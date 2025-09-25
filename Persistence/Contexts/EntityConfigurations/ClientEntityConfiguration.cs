@@ -16,7 +16,7 @@ namespace Persistence.Contexts.EntityConfigurations
             #region Property configurations 
             builder.Property(c => c.Name).IsRequired().HasMaxLength(100);
             builder.Property(c => c.Email).IsRequired().HasMaxLength(100);
-            builder.Property(c => c.PhoneNumber).HasMaxLength(20);
+            builder.Property(c => c.PhoneNumber).HasMaxLength(50);
             builder.Property(c => c.City).HasMaxLength(70);
             builder.Property(c => c.Country).HasMaxLength(70);
             #endregion

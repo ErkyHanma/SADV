@@ -48,6 +48,7 @@ var clientList = customers
         Id = r.CustomerID,
         Name = $"{r.FirstName} {r.LastName}",
         Email = r.Email,
+        PhoneNumber = r.Phone,
         City = r.City,
         Country = r.Country,
     })

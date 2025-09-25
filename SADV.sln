@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{ED60F391-4ADD-4501-865B-011D0145E7F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "readcsv", "readcsv\readcsv.csproj", "{1845DECD-C174-495C-B098-9DA70B52BA26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "readcsv\App.csproj", "{1845DECD-C174-495C-B098-9DA70B52BA26}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{245FBCE1-2C01-4D2B-A074-07DBCC1FE377}"
 EndProject

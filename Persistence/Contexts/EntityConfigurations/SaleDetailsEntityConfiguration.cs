@@ -9,7 +9,7 @@ namespace Persistence.Contexts.EntityConfigurations
         public void Configure(EntityTypeBuilder<SaleDetails> builder)
         {
             #region Basic configuration
-            builder.HasKey(sd => sd.SaleDetailId);
+            builder.HasKey(x => new { x.SaleId, x.ProductId });
             builder.ToTable("SaleDetails");
             #endregion
 

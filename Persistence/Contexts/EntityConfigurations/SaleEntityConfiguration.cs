@@ -15,6 +15,7 @@ namespace Persistence.Contexts.EntityConfigurations
             #endregion
 
             #region Property configurations 
+            builder.Property(s => s.Date).HasColumnType("timestamp without time zone");
             #endregion
 
             #region relationships

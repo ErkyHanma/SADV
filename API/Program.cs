@@ -1,7 +1,5 @@
-using Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
-using Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +16,6 @@ builder.Services.AddDbContext<SADVContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
 
 var app = builder.Build();

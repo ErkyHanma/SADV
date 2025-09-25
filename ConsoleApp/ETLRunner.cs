@@ -26,16 +26,16 @@ namespace ConsoleApp
             // ---------
             Console.WriteLine("Reading CSV records...\n");
 
-            var readCSVService1 = new BaseReadCSVService<CustomerDto>(Path.Combine(_basepath, "customers.csv"));
+            var readCSVService1 = new ReadCSVService<CustomerDto>(Path.Combine(_basepath, "customers.csv"));
             var customers = readCSVService1.ReadRecords();
 
-            var readCSVService4 = new BaseReadCSVService<ProductsDto>(Path.Combine(_basepath, "products.csv"));
+            var readCSVService4 = new ReadCSVService<ProductsDto>(Path.Combine(_basepath, "products.csv"));
             var products = readCSVService4.ReadRecords();
 
-            var readCSVService3 = new BaseReadCSVService<OrdersDto>(Path.Combine(_basepath, "orders.csv"));
+            var readCSVService3 = new ReadCSVService<OrdersDto>(Path.Combine(_basepath, "orders.csv"));
             var orders = readCSVService3.ReadRecords();
 
-            var readCSVService2 = new BaseReadCSVService<OrderDetailDto>(Path.Combine(_basepath, "order_details.csv"));
+            var readCSVService2 = new ReadCSVService<OrderDetailDto>(Path.Combine(_basepath, "order_details.csv"));
             var orderDetails = readCSVService2.ReadRecords();
 
             Console.WriteLine($"Total Customer records: {customers.Count}");

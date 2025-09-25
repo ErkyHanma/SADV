@@ -2,12 +2,12 @@
 
 namespace Application.Services
 {
-    public class BaseReadCSVService<T>
+    public class ReadCSVService<T>
     {
 
         private readonly string _pathFile;
 
-        public BaseReadCSVService(string pathfile)
+        public ReadCSVService(string pathfile)
         {
             _pathFile = pathfile;
         }

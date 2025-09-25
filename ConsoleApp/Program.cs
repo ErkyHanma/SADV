@@ -13,7 +13,7 @@ var configuration = new ConfigurationBuilder()
 
 
 // Variables de uso
-string basePath = @"C:\Users\yenze\OneDrive\Desktop\Archivo CSV Análisis de Ventas-20250923/";
+string basePath = @"C:\Users\yenze\Programming\CollegeClass\Electiva 1\Archivo CSV Análisis de Ventas-20250923";
 var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 

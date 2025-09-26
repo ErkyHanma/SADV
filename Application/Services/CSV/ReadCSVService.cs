@@ -1,10 +1,9 @@
 ﻿using CsvHelper;
 
-namespace Application.Services
+namespace Application.Services.CSV
 {
-    public class ReadCSVService<T>
+    public class ReadCSVService<T> where T : class
     {
-
         private readonly string _pathFile;
 
         public ReadCSVService(string pathfile)
@@ -21,7 +20,7 @@ namespace Application.Services
                 if (!File.Exists(_pathFile))
                 {
                     Console.WriteLine($"File not found: {_pathFile}");
-                    return new List<T>();
+                    return [];
                 }
 
 
@@ -41,9 +40,7 @@ namespace Application.Services
 
 
 
-            return new List<T>();
+            return [];
         }
     }
 }
-
-

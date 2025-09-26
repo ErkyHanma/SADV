@@ -1,53 +1,60 @@
 ﻿using Application.Dtos.CSV;
-using Application.Services;
+using Application.Services.CSV;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 
 namespace ConsoleApp
 {
-    public class ETLRunner
+    public class CSVRunner
     {
         private string _basepath;
         private SADVContext _context;
 
-        public ETLRunner(string basepath, SADVContext context)
+        public CSVRunner(string basepath, SADVContext context)
         {
             _basepath = basepath;
             _context = context;
 
         }
 
-        public async Task Run()
+        public async Task ProcessCSV()
         {
             try
             {
+
+                Console.WriteLine("Starting CSV files processing...\n");
+
                 // ---------
                 // Read 
                 // ---------
                 Console.WriteLine("Reading CSV records...\n");
 
-                var readCSVService1 = new ReadCSVService<CustomerDto>(Path.Combine(_basepath, "customers.csv"));
-                var customers = readCSVService1.ReadRecords();
+                var readCSVServiceCustomer = new ReadCSVService<CustomerDto>(Path.Combine(_basepath, "customers.csv"));
+                var customers = readCSVServiceCustomer.ReadRecords();
 
-                var readCSVService4 = new ReadCSVService<ProductsDto>(Path.Combine(_basepath, "products.csv"));
-                var products = readCSVService4.ReadRecords();
+                var readCSVServiceProducts = new ReadCSVService<ProductsDto>(Path.Combine(_basepath, "products.csv"));
+                var products = readCSVServiceProducts.ReadRecords();
 
-                var readCSVService3 = new ReadCSVService<OrdersDto>(Path.Combine(_basepath, "orders.csv"));
-                var orders = readCSVService3.ReadRecords();
+                var readCSVServiceOrder = new ReadCSVService<OrdersDto>(Path.Combine(_basepath, "orders.csv"));
+                var orders = readCSVServiceOrder.ReadRecords();
 
-                var readCSVService2 = new ReadCSVService<OrderDetailDto>(Path.Combine(_basepath, "order_details.csv"));
-                var orderDetails = readCSVService2.ReadRecords();
+                var readCSVServiceOrderDetail = new ReadCSVService<OrderDetailDto>(Path.Combine(_basepath, "order_details.csv"));
+                var orderDetails = readCSVServiceOrderDetail.ReadRecords();
 
-                Console.WriteLine($"Total Customer records: {customers.Count}");
-                Console.WriteLine($"Total Product records: {products.Count}");
-                Console.WriteLine($"Total Order records: {orders.Count}");
-                Console.WriteLine($"Total Order Details records: {orderDetails.Count}\n");
+                var dataSource = new DataSource { SourceType = "CSV" };
+
+
+                Console.WriteLine(customers.Count > 0 ? $"Total Customer records: {customers.Count}" : "Not Customers found");
+                Console.WriteLine(products.Count > 0 ? $"Total Product records: {products.Count}" : "Not Product found");
+                Console.WriteLine(orders.Count > 0 ? $"Total Order records: {orders.Count}" : "Not Order found");
+                Console.WriteLine(orderDetails.Count > 0 ? $"Total Order Details records: {orderDetails.Count}" : "Not Order Details found");
+
 
                 // ----------------------------
                 // Data Transformation / Cleaning
                 // ----------------------------
-                Console.WriteLine("Transforming records...\n");
+                Console.WriteLine("\nTransforming records...\n");
 
                 // Customers: Remove duplicates & null/empty values
                 var clientList = customers
@@ -128,40 +135,49 @@ namespace ConsoleApp
                 // ------------
                 Console.WriteLine("Clearing existing data from tables...\n");
 
+
                 using var transaction = await _context.Database.BeginTransactionAsync();
+                var csvDataLoader = new LoadCSVService(_context);
 
                 try
                 {
+                    // For Development
                     _context.Database.ExecuteSqlRaw("DELETE FROM public.\"SaleDetails\"");
                     _context.Database.ExecuteSqlRaw("DELETE FROM public.\"Sales\"");
                     _context.Database.ExecuteSqlRaw("DELETE FROM public.\"Products\"");
                     _context.Database.ExecuteSqlRaw("DELETE FROM public.\"Clients\"");
+                    _context.Database.ExecuteSqlRaw("DELETE FROM public.\"DataSources\"");
 
                     Console.WriteLine("Existing data cleared.\n");
 
-                    Console.WriteLine("Inserting transformed data into database...");
+                    Console.WriteLine("Inserting transformed data into database...\n");
 
                     // Clients
-                    _context.Clients.AddRange(clientList);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine($"Inserted Clients: {clientList.Count}");
+                    await csvDataLoader.LoadCSVRecords<Client>(clientList);
+                    Console.WriteLine(clientList.Count > 0 ? $"Inserted Clients: {clientList.Count}" : "Not customers were inserted");
 
                     // Products
-                    _context.Products.AddRange(productList);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine($"Inserted Products: {productList.Count}");
+                    await csvDataLoader.LoadCSVRecords<Product>(productList);
+                    Console.WriteLine(productList.Count > 0 ? $"Inserted Products: {productList.Count}" : "Not products were inserted");
 
                     // Orders
-                    _context.Sales.AddRange(saleList);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine($"Inserted Orders: {saleList.Count}");
+                    await csvDataLoader.LoadCSVRecords<Sale>(saleList);
+                    Console.WriteLine(saleList.Count > 0 ? $"Inserted Orders: {saleList.Count}" : "Not orders were inserted");
 
                     // Order Details
-                    _context.SaleDetails.AddRange(saleDetailsList);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine($"Inserted Order Details: {saleDetailsList.Count}");
+                    await csvDataLoader.LoadCSVRecords<SaleDetails>(saleDetailsList);
+                    Console.WriteLine(saleDetailsList.Count > 0 ? $"Inserted Order Details: {saleDetailsList.Count}" : "Not Order Details were inserted");
+
+                    // Data Source
+                    await csvDataLoader.LoadCSVRecord<DataSource>(dataSource);
+                    Console.WriteLine($"Data inserted was type {dataSource.SourceType} loaded in {dataSource.LoadDate} ");
+
+                    await transaction.CommitAsync();
 
                     Console.WriteLine("\nData load complete.");
+
+                    Console.WriteLine("\nCSV files processing completed!");
+
                 }
                 catch (Exception dbEx)
                 {

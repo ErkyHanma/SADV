@@ -16,7 +16,6 @@ var configuration = new ConfigurationBuilder()
 string basePath = @"C:\Users\yenze\Programming\CollegeClass\Electiva 1\Archivo CSV Análisis de Ventas-20250923";
 var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-
 var services = new ServiceCollection();
 services.AddETLDependency(connectionString);
 
@@ -28,9 +27,12 @@ var context = scope.ServiceProvider.GetRequiredService<SADVContext>();
 var optionsBuilder = new DbContextOptionsBuilder<SADVContext>();
 optionsBuilder.UseNpgsql(connectionString);
 
-var ETL = new ETLRunner(basePath, context);
+// Execution 
+var csvRunner = new CSVRunner(basePath, context);
 
-await ETL.Run();
+await csvRunner.ProcessCSV();
+
+
 
 
 
